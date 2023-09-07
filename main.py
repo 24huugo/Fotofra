@@ -17,19 +17,23 @@ def seleccionar_carpeta():
     entrada_carpeta.delete(0, tk.END)
     entrada_carpeta.insert(0, carpeta)
 
+# Función para agregar una línea de log al recuadro de resultados
+def agregar_log(texto):
+    resultado.insert(tk.END, texto + "\n")
+    resultado.see(tk.END)  # Hacer que el último texto sea visible
+    ventana.update()  # Forzar la actualización de la ventana
+
 # Función para procesar el video en un hilo separado
 def procesar_video():
     nombre_archivo_video = entrada_nombre_video.get()
     carpeta_destino = entrada_carpeta.get()
 
     if not os.path.isfile(nombre_archivo_video):
-        resultado.delete(1.0, tk.END)
-        resultado.insert(tk.END, "El archivo de video no existe.")
+        agregar_log("El archivo de video no existe.")
         return
 
     if not carpeta_destino:
-        resultado.delete(1.0, tk.END)
-        resultado.insert(tk.END, "Debes seleccionar una carpeta de destino.")
+        agregar_log("Debes seleccionar una carpeta de destino.")
         return
 
     os.makedirs(carpeta_destino, exist_ok=True)
@@ -38,8 +42,7 @@ def procesar_video():
         cap = cv2.VideoCapture(nombre_archivo_video)
 
         if not cap.isOpened():
-            resultado.delete(1.0, tk.END)
-            resultado.insert(tk.END, "Error al abrir el archivo de video.")
+            agregar_log("Error al abrir el archivo de video.")
             return
 
         frame_count = 0
@@ -55,13 +58,12 @@ def procesar_video():
 
             frame_count += 1
 
-            progreso.config(text=f'Frame {frame_count:04d}')
+            agregar_log(f'Se ha guardado el frame {frame_count:04d}')
 
         cap.release()
         cv2.destroyAllWindows()
 
-        resultado.delete(1.0, tk.END)
-        resultado.insert(tk.END, f'Se han guardado {frame_count} frames en la carpeta "{carpeta_destino}".')
+        agregar_log(f'Se han guardado {frame_count} frames en la carpeta "{carpeta_destino}".')
 
     # Iniciar un hilo para el procesamiento del video
     thread = threading.Thread(target=procesar)
@@ -100,10 +102,7 @@ boton_seleccionar_carpeta.pack(pady=10)
 boton_procesar = ttk.Button(ventana, text="Procesar Video", command=procesar_video)
 boton_procesar.pack(pady=20)
 
-progreso = ttk.Label(ventana, text="Frame 0000", foreground="#fff")  # Texto blanco
-progreso.pack()
-
-resultado = tk.Text(ventana, wrap=tk.WORD, height=5, width=50, foreground="#fff", background="#222")  # Texto blanco, fondo oscuro
+resultado = tk.Text(ventana, wrap=tk.WORD, height=10, width=50, foreground="#fff", background="#222")  # Texto blanco, fondo oscuro
 resultado.pack()
 
 ventana.mainloop()
