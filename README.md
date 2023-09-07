@@ -26,3 +26,5 @@ Los frames se guardarán en la carpeta de destino con nombres como "frame_0000.j
 
 Asegúrate de tener un archivo de video válido en el formato soportado (por ejemplo, .mp4, .avi, .mkv).
 Puedes personalizar aún más el código según tus necesidades.
+
+![image](https://github.com/24huugo/Fotofra/assets/117673094/4df3792b-2cfa-47a0-bff0-24126aaec8d6)
